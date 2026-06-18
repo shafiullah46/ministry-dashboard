@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ministry of Planning — CDWP & ECNEC Dashboard 2025-26</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --green:#1D9E75;--green2:#0F6E56;--green-l:#E1F5EE;
+  --blue:#185FA5;--blue2:#0C447C;--blue-l:#E6F1FB;
+  --amber:#BA7517;--amber2:#633806;--amber-l:#FAEEDA;
+  --coral:#993C1D;--coral-l:#FAECE7;
+  --purple:#534AB7;--purple-l:#EEEDFE;
+  --teal:#1D9E75;--gray:#5F5E5A;--gray-l:#F1EFE8;
+  --bg:#F7F8FA;--white:#fff;--border:#E2E6EA;
+  --text:#1A202C;--text2:#4A5568;--text3:#718096;
+  --shadow:0 1px 4px rgba(0,0,0,.08);
+  --shadow2:0 4px 16px rgba(0,0,0,.12);
+  --rad:10px;--rad2:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+/* Header */
+.header{background:linear-gradient(135deg,#0F3460 0%,#185FA5 60%,#1D9E75 100%);color:#fff;padding:0;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;}
+.header-logo{display:flex;align-items:center;gap:14px;}
+.header-logo img{width:52px;height:52px;border-radius:50%;background:#fff;padding:4px;}
+.header-title{font-size:20px;font-weight:700;letter-spacing:.3px;}
+.header-sub{font-size:12px;opacity:.85;margin-top:2px;}
+.header-period{text-align:right;font-size:12px;opacity:.9;background:rgba(255,255,255,.12);border-radius:8px;padding:8px 16px;}
+.header-period b{display:block;font-size:14px;font-weight:700;}
+/* Nav */
+.nav{background:#fff;border-bottom:2px solid var(--border);display:flex;gap:4px;padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+.nav-btn{padding:14px 18px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.nav-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.nav-btn:hover{color:var(--blue);}
+/* Main */
+.main{padding:24px 32px;max-width:1400px;margin:0 auto;}
+.page{display:none;} .page.active{display:block;}
+/* Summary cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
+.kpi{background:var(--white);border-radius:var(--rad2);padding:18px 16px;box-shadow:var(--shadow);border-left:4px solid var(--blue);position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;right:-14px;top:-14px;width:70px;height:70px;border-radius:50%;opacity:.07;background:var(--blue);}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-val{font-size:32px;font-weight:700;line-height:1;color:var(--text);}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:5px;}
+.kpi-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px;}
+/* Section title */
+.sec-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text);}
+.sec-title i{color:var(--blue);}
+/* Charts row */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.charts-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:24px;}
+.chart-card{background:var(--white);border-radius:var(--rad2);padding:20px;box-shadow:var(--shadow);}
+.chart-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+.chart-sub{font-size:11px;color:var(--text3);margin-bottom:14px;}
+/* Project table */
+.tbl-wrap{background:var(--white);border-radius:var(--rad2);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;}
+.tbl-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.tbl-title{font-size:14px;font-weight:700;}
+.tbl-count{font-size:12px;color:var(--text3);}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;min-width:220px;}
+.search-box input{border:none;background:none;outline:none;font-size:12px;width:100%;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--bg);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{cursor:pointer;transition:background .15s;}
+tbody tr:hover{background:#EBF4FF;}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+.td-name{max-width:320px;font-weight:500;color:var(--blue);text-decoration:underline dotted;}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.b-green{background:var(--green-l);color:var(--green2);}
+.b-blue{background:var(--blue-l);color:var(--blue2);}
+.b-amber{background:var(--amber-l);color:var(--amber2);}
+.b-coral{background:var(--coral-l);color:var(--coral);}
+.b-purple{background:var(--purple-l);color:var(--purple);}
+.b-gray{background:var(--gray-l);color:var(--gray);}
+/* Detail panel */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;}
+.detail-overlay.open{display:flex;}
+.detail-panel{background:var(--white);border-radius:var(--rad2);padding:30px;max-width:680px;width:90%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow2);position:relative;}
+.detail-close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);}
+.detail-header{margin-bottom:20px;}
+.detail-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.detail-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4;}
+.detail-agency{font-size:13px;color:var(--text2);}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+.detail-item{background:var(--bg);border-radius:var(--rad);padding:12px 14px;}
+.detail-item-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.detail-item-val{font-size:15px;font-weight:700;color:var(--text);}
+.detail-bar{margin-top:20px;}
+.detail-bar-label{font-size:12px;color:var(--text2);margin-bottom:6px;}
+.detail-bar-track{height:10px;background:var(--border);border-radius:5px;overflow:hidden;}
+.detail-bar-fill{height:100%;border-radius:5px;transition:width .5s;}
+/* Tab filter */
+.tab-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.tf-btn{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--white);cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;}
+.tf-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+/* Summary table */
+.sum-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--rad2);overflow:hidden;box-shadow:var(--shadow);}
+.sum-table th{background:var(--blue);color:#fff;padding:11px 16px;font-size:12px;text-align:left;}
+.sum-table td{padding:11px 16px;font-size:12px;border-bottom:1px solid var(--border);}
+.sum-table tr:last-child td{border-bottom:none;font-weight:700;background:var(--bg);}
+.sum-table tr:nth-child(even) td{background:#F9FBFF;}
+/* Candlestick note */
+.candle-wrapper{position:relative;height:320px;}
+/* Meetings timeline */
+.timeline{display:flex;gap:8px;flex-wrap:wrap;padding:16px 0;}
+.tm-item{background:var(--blue-l);border:1px solid #B5D4F4;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;color:var(--blue2);}
+.tm-item.ecnec{background:var(--purple-l);border-color:#AFA9EC;color:var(--purple);}
+/* Upload Button */
+.upload-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;backdrop-filter:blur(4px);}
+.upload-btn:hover{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.7);}
+.upload-btn i{font-size:16px;}
+/* Upload Modal */
+.upload-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center;}
+.upload-overlay.open{display:flex;}
+.upload-modal{background:#fff;border-radius:20px;padding:32px;max-width:520px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;}
+.upload-modal-close{position:absolute;top:14px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);}
+.upload-modal-title{font-size:18px;font-weight:700;margin-bottom:6px;}
+.upload-modal-sub{font-size:13px;color:var(--text2);margin-bottom:24px;}
+.upload-drop-zone{border:2.5px dashed var(--border);border-radius:16px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);margin-bottom:16px;}
+.upload-drop-zone:hover,.upload-drop-zone.drag{border-color:var(--blue);background:var(--blue-l);}
+.upload-drop-zone i{font-size:40px;color:var(--blue);margin-bottom:12px;display:block;}
+.upload-drop-zone p{font-size:14px;color:var(--text2);margin-bottom:6px;}
+.upload-drop-zone small{font-size:11px;color:var(--text3);}
+.upload-or{text-align:center;font-size:12px;color:var(--text3);margin:12px 0;position:relative;}
+.upload-or::before,.upload-or::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border);}
+.upload-or::before{left:0;} .upload-or::after{right:0;}
+.upload-file-btn{display:block;width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;}
+.upload-file-btn:hover{background:var(--blue2);}
+.upload-file-types{display:flex;gap:10px;margin-top:16px;justify-content:center;}
+.upload-type-pill{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--text2);}
+.upload-type-pill i{font-size:14px;}
+.upload-progress{margin-top:16px;display:none;}
+.upload-progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.upload-progress-fill{height:100%;background:var(--green);border-radius:4px;transition:width .4s;}
+.upload-status{font-size:12px;color:var(--text2);margin-top:8px;text-align:center;}
+.upload-success{background:var(--green-l);border:1px solid #9FE1CB;border-radius:12px;padding:14px 18px;display:none;margin-top:16px;}
+.upload-success i{color:var(--green);margin-right:6px;}
+.upload-success span{font-size:13px;font-weight:600;color:var(--green2);}
+.upload-file-list{margin-top:14px;display:none;}
+.upload-file-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:10px;margin-bottom:8px;border:1px solid var(--border);}
+.upload-file-item i{font-size:20px;}
+.upload-file-info{flex:1;}
+.upload-file-name{font-size:13px;font-weight:600;color:var(--text);}
+.upload-file-size{font-size:11px;color:var(--text3);}
+.upload-file-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px;}
+.upload-file-del:hover{color:var(--coral);}
+/* Responsive */
+@media(max-width:900px){.charts-row,.charts-row-3{grid-template-columns:1fr;}.detail-grid{grid-template-columns:1fr;}.main{padding:14px;}.header-inner{padding:14px;flex-wrap:wrap;gap:12px;}.upload-btn{font-size:12px;padding:7px 12px;}}
+/* Upload Button */
+.upload-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.upload-btn:hover{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.7);}
+.upload-btn i{font-size:16px;}
+.upload-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:2000;align-items:center;justify-content:center;}
+.upload-overlay.open{display:flex;}
+.upload-modal{background:#fff;border-radius:20px;padding:32px;max-width:520px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.22);position:relative;}
+.upload-modal-close{position:absolute;top:14px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);}
+.upload-modal-title{font-size:18px;font-weight:700;margin-bottom:6px;}
+.upload-modal-sub{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5;}
+.upload-drop-zone{border:2.5px dashed #C8D6E5;border-radius:16px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);margin-bottom:16px;}
+.upload-drop-zone:hover,.upload-drop-zone.drag{border-color:var(--blue);background:var(--blue-l);}
+.upload-drop-zone i{font-size:42px;color:var(--blue);margin-bottom:12px;display:block;}
+.upload-drop-zone p{font-size:14px;color:var(--text2);margin-bottom:6px;}
+.upload-drop-zone small{font-size:11px;color:var(--text3);}
+.upload-or{text-align:center;font-size:12px;color:var(--text3);margin:14px 0;position:relative;}
+.upload-or::before,.upload-or::after{content:'';position:absolute;top:50%;width:44%;height:1px;background:var(--border);}
+.upload-or::before{left:0;}.upload-or::after{right:0;}
+.upload-file-btn{display:block;width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;}
+.upload-file-btn:hover{background:var(--blue2);}
+.upload-file-types{display:flex;gap:8px;margin-top:18px;justify-content:center;flex-wrap:wrap;}
+.upload-type-pill{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--text2);}
+.upload-type-pill i{font-size:14px;}
+.upload-file-list{margin-top:16px;}
+.upload-file-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:10px;margin-bottom:8px;border:1px solid var(--border);}
+.upload-file-item i.fi{font-size:22px;}
+.upload-file-info{flex:1;}
+.upload-file-name{font-size:13px;font-weight:600;color:var(--text);}
+.upload-file-size{font-size:11px;color:var(--text3);}
+.upload-file-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px;}
+.upload-file-del:hover{color:var(--coral);}
+.upload-progress{margin-top:14px;display:none;}
+.upload-progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.upload-progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:4px;transition:width .35s ease;}
+.upload-status{font-size:12px;color:var(--text2);margin-top:8px;text-align:center;}
+.upload-success{background:#E1F5EE;border:1px solid #5DCAA5;border-radius:12px;padding:14px 18px;display:none;margin-top:14px;align-items:center;gap:8px;}
+.upload-success i{color:var(--green);font-size:20px;}
+.upload-success span{font-size:13px;font-weight:600;color:var(--green2);}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div style="width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-landmark" style="color:#185FA5;font-size:22px;"></i>
+      </div>
+      <div>
+        <div class="header-title">Government of Pakistan — Planning Commission</div>
+        <div class="header-sub">Ministry of Planning, Development &amp; Special Initiatives — Annual Progress Report</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button class="upload-btn" onclick="openUpload()">
+        <i class="fas fa-cloud-upload-alt"></i> Upload File
+      </button>
+      <div class="header-period">
+        <b>1 April 2025 – 31 March 2026</b>
+        CDWP &amp; ECNEC Annual Review
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== UPLOAD MODAL ===== -->
+<div class="upload-overlay" id="upload-overlay" onclick="closeUploadOutside(event)">
+  <div class="upload-modal">
+    <button class="upload-modal-close" onclick="closeUpload()"><i class="fas fa-times"></i></button>
+    <div class="upload-modal-title"><i class="fas fa-file-import" style="color:var(--blue);margin-right:8px;"></i>Upload Data File</div>
+    <div class="upload-modal-sub">Excel (.xlsx, .xls) ya Word (.docx, .doc) file upload karein &mdash; data automatically dashboard mein add ho jayega</div>
+
+    <div class="upload-drop-zone" id="drop-zone"
+      ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)" onclick="document.getElementById('file-input').click()">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p><b>Drag &amp; Drop</b> file yahan chhod dein</p>
+      <small>ya neeche se browse karein</small>
+    </div>
+
+    <div class="upload-or">ya</div>
+    <button class="upload-file-btn" onclick="document.getElementById('file-input').click()">
+      <i class="fas fa-folder-open"></i> &nbsp;Computer se File Choose Karein
+    </button>
+    <input type="file" id="file-input" accept=".xlsx,.xls,.docx,.doc,.csv" style="display:none" onchange="handleFileSelect(event)">
+
+    <div class="upload-file-types">
+      <div class="upload-type-pill"><i class="fas fa-file-excel" style="color:#1D6F42;"></i> Excel (.xlsx, .xls)</div>
+      <div class="upload-type-pill"><i class="fas fa-file-word" style="color:#2B579A;"></i> Word (.docx, .doc)</div>
+      <div class="upload-type-pill"><i class="fas fa-file-csv" style="color:#BA7517;"></i> CSV</div>
+    </div>
+
+    <div class="upload-file-list" id="file-list"></div>
+
+    <div class="upload-progress" id="upload-progress">
+      <div class="upload-progress-bar"><div class="upload-progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="upload-status" id="upload-status">Processing file...</div>
+    </div>
+
+    <div class="upload-success" id="upload-success">
+      <i class="fas fa-check-circle"></i>
+      <span id="success-msg">File successfully uploaded!</span>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('overview')"><i class="fas fa-chart-pie"></i> Overview</button>
+  <button class="nav-btn" onclick="showPage('cdwp')"><i class="fas fa-gavel"></i> CDWP Projects</button>
+  <button class="nav-btn" onclick="showPage('ecnec')"><i class="fas fa-landmark"></i> ECNEC Projects</button>
+  <button class="nav-btn" onclick="showPage('summary')"><i class="fas fa-table"></i> Summary &amp; Statistics</button>
+  <button class="nav-btn" onclick="showPage('meetings')"><i class="fas fa-calendar-alt"></i> Meeting Dates</button>
+</nav>
+
+<div class="main">
+
+<!-- ============ OVERVIEW PAGE ============ -->
+<div id="page-overview" class="page active">
+  <div class="kpi-grid">
+    <div class="kpi" style="border-left-color:var(--blue)">
+      <div class="kpi-label">CDWP Meetings Held</div>
+      <div class="kpi-val">24</div>
+      <div class="kpi-sub">Apr 2025 – Mar 2026</div>
+      <span class="kpi-badge" style="background:var(--blue-l);color:var(--blue2)">CDWP</span>
+    </div>
+    <div class="kpi" style="border-left-color:var(--purple)">
+      <div class="kpi-label">ECNEC Meetings Held</div>
+      <div class="kpi-val">8</div>
+      <div class="kpi-sub">Apr 2025 – Mar 2026</div>
+      <span class="kpi-badge" style="background:var(--purple-l);color:var(--purple)">ECNEC</span>
+    </div>
+    <div class="kpi" style="border-left-color:var(--green)">
+      <div class="kpi-label">Schemes Approved — CDWP</div>
+      <div class="kpi-val">116</div>
+      <div class="kpi-sub">Total Cost: Rs. 315.1B</div>
+      <span class="kpi-badge" style="background:var(--green-l);color:var(--green2)">Annex-III</span>
+    </div>
+    <div class="kpi" style="border-left-color:var(--purple)">
+      <div class="kpi-label">Schemes Approved — ECNEC</div>
+      <div class="kpi-val">72</div>
+      <div class="kpi-sub">Total Cost: Rs. 5,102B</div>
+      <span class="kpi-badge" style="background:var(--purple-l);color:var(--purple)">Annex-IV</span>
+    </div>
+    <div class="kpi" style="border-left-color:var(--amber)">
+      <div class="kpi-label">Pending at ECNEC</div>
+      <div class="kpi-val">21</div>
+      <div class="kpi-sub">Recommended by CDWP</div>
+      <span class="kpi-badge" style="background:var(--amber-l);color:var(--amber2)">Annex-V</span>
+    </div>
+    <div class="kpi" style="border-left-color:var(--coral)">
+      <div class="kpi-label">Returned by CDWP</div>
+      <div class="kpi-val">3</div>
+      <div class="kpi-sub">After discussion</div>
+      <span class="kpi-badge" style="background:var(--coral-l);color:var(--coral)">Annex-VI</span>
+    </div>
+    <div class="kpi" style="border-left-color:var(--coral)">
+      <div class="kpi-label">Returned — Preliminary</div>
+      <div class="kpi-val">271</div>
+      <div class="kpi-sub">Preliminary examination</div>
+      <span class="kpi-badge" style="background:var(--coral-l);color:var(--coral)">Annex-VII</span>
+    </div>
+    <div class="kpi" style="border-left-color:var(--amber)">
+      <div class="kpi-label">Under Appraisal</div>
+      <div class="kpi-val">226</div>
+      <div class="kpi-sub">In pipeline</div>
+      <span class="kpi-badge" style="background:var(--amber-l);color:var(--amber2)">Annex-VIII</span>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Sector-wise No. of Schemes — CDWP vs ECNEC</div>
+      <div class="chart-sub">Number of approved projects per sector</div>
+      <div style="position:relative;height:300px;">
+        <canvas id="sectorBarChart" role="img" aria-label="Bar chart showing CDWP and ECNEC approved schemes by sector">Sector-wise scheme counts for CDWP and ECNEC.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Approved Cost Comparison — CDWP vs ECNEC (Rs. Billion)</div>
+      <div class="chart-sub">Approved cost per sector in Rs. Billion</div>
+      <div style="position:relative;height:300px;">
+        <canvas id="costBarChart" role="img" aria-label="Bar chart showing approved costs by sector">Approved cost breakdown CDWP vs ECNEC.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">CDWP — Sector-wise Cost Share (%)</div>
+      <div class="chart-sub">Distribution of Rs. 315.1 Billion approved cost</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;" id="cdwp-pie-legend"></div>
+      <div style="position:relative;height:240px;">
+        <canvas id="cdwpPieChart" role="img" aria-label="Pie chart CDWP sector cost distribution">CDWP sector cost distribution.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">ECNEC — Sector-wise Cost Share (%)</div>
+      <div class="chart-sub">Distribution of Rs. 5,102 Billion approved cost</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;" id="ecnec-pie-legend"></div>
+      <div style="position:relative;height:240px;">
+        <canvas id="ecnecPieChart" role="img" aria-label="Pie chart ECNEC sector cost distribution">ECNEC sector cost distribution.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Scheme Pipeline — Status Breakdown (Candlestick-style)</div>
+      <div class="chart-sub">Monthly scheme flow: received vs processed vs pending (Apr 2025 – Mar 2026)</div>
+      <div style="position:relative;height:280px;">
+        <canvas id="candleChart" role="img" aria-label="Scheme pipeline status bar chart">Monthly scheme pipeline.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Overall Project Disposition</div>
+      <div class="chart-sub">How 705 total projects were handled</div>
+      <div style="position:relative;height:280px;">
+        <canvas id="dispositionChart" role="img" aria-label="Doughnut chart project disposition">Project disposition breakdown.</canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CDWP PAGE ============ -->
+<div id="page-cdwp" class="page">
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+    <div class="kpi" style="border-left-color:var(--blue)"><div class="kpi-label">Total Considered</div><div class="kpi-val">212</div></div>
+    <div class="kpi" style="border-left-color:var(--green)"><div class="kpi-label">Approved</div><div class="kpi-val">116</div></div>
+    <div class="kpi" style="border-left-color:var(--amber)"><div class="kpi-label">Referred to ECNEC</div><div class="kpi-val">76</div></div>
+    <div class="kpi" style="border-left-color:var(--coral)"><div class="kpi-label">Returned</div><div class="kpi-val">3</div></div>
+    <div class="kpi" style="border-left-color:var(--green)"><div class="kpi-label">Total Approved Cost</div><div class="kpi-val" style="font-size:22px;">315B</div><div class="kpi-sub">Rs. 315,104M</div></div>
+  </div>
+
+  <div class="sec-title"><i class="fas fa-filter"></i> Filter by Sector</div>
+  <div class="tab-filter" id="cdwp-sector-filter"></div>
+
+  <div class="charts-row" style="margin-bottom:20px;">
+    <div class="chart-card">
+      <div class="chart-title">CDWP — Approved Cost by Sector (Rs. Million)</div>
+      <div style="position:relative;height:250px;"><canvas id="cdwpSectorCost" role="img" aria-label="CDWP sector cost bar">CDWP sector approved costs.</canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">CDWP — No. of Schemes by Sector</div>
+      <div style="position:relative;height:250px;"><canvas id="cdwpSectorCount" role="img" aria-label="CDWP sector scheme count">CDWP sector scheme counts.</canvas></div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-header">
+      <div><div class="tbl-title"><i class="fas fa-gavel" style="color:var(--blue)"></i> CDWP Approved Projects (Annex-III)</div><div class="tbl-count" id="cdwp-count">116 projects — Click any row for full details</div></div>
+      <div class="search-box"><i class="fas fa-search" style="color:var(--text3)"></i><input type="text" id="cdwp-search" placeholder="Search project name, agency..." oninput="filterTable('cdwp')"></div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>Project Name</th><th>Sector</th><th>Sponsoring Agency</th><th>PC-I Cost (Rs.M)</th><th>Approved Cost (Rs.M)</th><th>Date of Approval</th><th>Status</th></tr></thead>
+        <tbody id="cdwp-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ECNEC PAGE ============ -->
+<div id="page-ecnec" class="page">
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+    <div class="kpi" style="border-left-color:var(--purple)"><div class="kpi-label">ECNEC Meetings</div><div class="kpi-val">8</div></div>
+    <div class="kpi" style="border-left-color:var(--green)"><div class="kpi-label">Approved</div><div class="kpi-val">72</div></div>
+    <div class="kpi" style="border-left-color:var(--green)"><div class="kpi-label">Total Approved Cost</div><div class="kpi-val" style="font-size:22px;">5,102B</div><div class="kpi-sub">Rs. 5,102,052M</div></div>
+    <div class="kpi" style="border-left-color:var(--amber)"><div class="kpi-label">Largest Sector Cost</div><div class="kpi-val" style="font-size:18px;">Energy</div><div class="kpi-sub">Rs. 1,963,489M</div></div>
+  </div>
+
+  <div class="sec-title"><i class="fas fa-filter"></i> Filter by Sector</div>
+  <div class="tab-filter" id="ecnec-sector-filter"></div>
+
+  <div class="charts-row" style="margin-bottom:20px;">
+    <div class="chart-card">
+      <div class="chart-title">ECNEC — Approved Cost by Sector (Rs. Billion)</div>
+      <div style="position:relative;height:250px;"><canvas id="ecnecSectorCost" role="img" aria-label="ECNEC sector cost">ECNEC sector costs.</canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">ECNEC — No. of Schemes by Sector</div>
+      <div style="position:relative;height:250px;"><canvas id="ecnecSectorCount" role="img" aria-label="ECNEC sector count">ECNEC scheme counts by sector.</canvas></div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-header">
+      <div><div class="tbl-title"><i class="fas fa-landmark" style="color:var(--purple)"></i> ECNEC Approved Projects (Annex-IV)</div><div class="tbl-count" id="ecnec-count">72 projects — Click any row for full details</div></div>
+      <div class="search-box"><i class="fas fa-search" style="color:var(--text3)"></i><input type="text" id="ecnec-search" placeholder="Search project name, agency..." oninput="filterTable('ecnec')"></div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>Project Name</th><th>Sector</th><th>Sponsoring Agency</th><th>PC-I Cost (Rs.M)</th><th>Approved Cost (Rs.M)</th><th>Date of Approval</th><th>Status</th></tr></thead>
+        <tbody id="ecnec-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SUMMARY PAGE ============ -->
+<div id="page-summary" class="page">
+  <div class="sec-title"><i class="fas fa-table"></i> Projects Pending &amp; Received Summary (2025-26)</div>
+  <table class="sum-table" style="margin-bottom:24px;">
+    <thead><tr><th>Description</th><th>Number</th></tr></thead>
+    <tbody>
+      <tr><td>Schemes pending at end of March 2025</td><td><b>260</b></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;— Brought forwarded: CDWP as on 31-03-2025</td><td>243</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;— Brought forwarded: ECNEC as on 31-03-2025</td><td>17</td></tr>
+      <tr><td>Schemes received during period (1 Apr 2025 – 31 Mar 2026)</td><td><b>449</b></td></tr>
+      <tr><td><b>Total</b></td><td><b>709</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title"><i class="fas fa-list-ol"></i> Detail of Schemes</div>
+  <table class="sum-table" style="margin-bottom:24px;">
+    <thead><tr><th>Category</th><th>Description</th><th>Count</th><th>Annex</th></tr></thead>
+    <tbody>
+      <tr><td><b>A</b></td><td>Sector-wise cost breakup &amp; schemes considered by CDWP</td><td><b>212</b></td><td>—</td></tr>
+      <tr><td>A.1</td><td>Schemes approved by CDWP (1 Apr 2025 – 31 Mar 2026)</td><td>116</td><td>Annex-III</td></tr>
+      <tr><td>A.2</td><td>Schemes approved by ECNEC (1 Apr 2025 – 31 Mar 2026)</td><td>72</td><td>Annex-IV</td></tr>
+      <tr><td>A.3</td><td>Recommended by CDWP but not considered by ECNEC</td><td>21</td><td>Annex-V</td></tr>
+      <tr><td>A.4</td><td>Schemes returned after discussion by CDWP</td><td>03</td><td>Annex-VI</td></tr>
+      <tr><td><b>B</b></td><td>Schemes returned — preliminary examination</td><td><b>271</b></td><td>Annex-VII</td></tr>
+      <tr><td><b>C</b></td><td>Schemes under appraisal</td><td><b>226</b></td><td>Annex-VIII</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title"><i class="fas fa-rupee-sign"></i> Sector-wise Cost Breakup Table (Rs. Million)</div>
+  <div style="overflow-x:auto;">
+  <table class="sum-table">
+    <thead>
+      <tr>
+        <th>Sr.</th><th>Sector</th>
+        <th>CDWP No.</th><th>CDWP Est. Cost</th><th>CDWP Approved</th>
+        <th>ECNEC No.</th><th>ECNEC Est. Cost</th><th>ECNEC Approved</th>
+      </tr>
+    </thead>
+    <tbody id="sector-table-body"></tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ============ MEETINGS PAGE ============ -->
+<div id="page-meetings" class="page">
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title" style="color:var(--blue)"><i class="fas fa-gavel"></i> CDWP Meeting Dates (24 Meetings)</div>
+      <div class="timeline" id="cdwp-meetings"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title" style="color:var(--purple)"><i class="fas fa-landmark"></i> ECNEC Meeting Dates (8 Meetings)</div>
+      <div class="timeline" id="ecnec-meetings"></div>
+    </div>
+  </div>
+  <div class="chart-card" style="margin-top:20px;">
+    <div class="chart-title">Meetings per Month — CDWP &amp; ECNEC</div>
+    <div style="position:relative;height:260px;"><canvas id="meetingsChart" role="img" aria-label="Monthly meeting frequency CDWP and ECNEC">Monthly meetings.</canvas></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- Detail Overlay -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
+  <div class="detail-panel">
+    <button class="detail-close" onclick="closeDetailPanel()"><i class="fas fa-times"></i></button>
+    <div class="detail-header">
+      <div class="detail-tag" id="d-tag"></div>
+      <div class="detail-name" id="d-name"></div>
+      <div class="detail-agency" id="d-agency"></div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-item-label">Sector</div><div class="detail-item-val" id="d-sector"></div></div>
+      <div class="detail-item"><div class="detail-item-label">PC-I Total Cost</div><div class="detail-item-val" id="d-cost"></div></div>
+      <div class="detail-item"><div class="detail-item-label">Approved Cost</div><div class="detail-item-val" id="d-approved"></div></div>
+      <div class="detail-item"><div class="detail-item-label">Date of Approval</div><div class="detail-item-val" id="d-date"></div></div>
+      <div class="detail-item"><div class="detail-item-label">Date of Receipt (PD&SI)</div><div class="detail-item-val" id="d-receipt"></div></div>
+      <div class="detail-item"><div class="detail-item-label">Foreign Exchange Component</div><div class="detail-item-val" id="d-fec"></div></div>
+    </div>
+    <div class="detail-bar" id="d-barwrap">
+      <div class="detail-bar-label">Approved vs Estimated Cost</div>
+      <div class="detail-bar-track"><div class="detail-bar-fill" id="d-bar" style="background:var(--green)"></div></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="d-bar-text"></div>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:var(--rad);font-size:12px;color:var(--text2);" id="d-note"></div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const sectorTableData = [
+  {sr:1,sec:'Agriculture & Food',cn:3,ce:12154.37,ca:8340.00,en:2,ee:116543.87,ea:116543.87},
+  {sr:2,sec:'Devolution & Area Dev.',cn:1,ce:2988.68,ca:2988.68,en:1,ee:12461.66,ea:12461.66},
+  {sr:3,sec:'Education',cn:12,ce:38232.07,ca:36895.59,en:5,ee:111937.42,ea:111937.42},
+  {sr:4,sec:'Energy',cn:9,ce:21530.96,ca:21467.43,en:7,ee:1965434.09,ea:1963489.53},
+  {sr:5,sec:'Environment',cn:3,ce:11531.77,ca:11531.77,en:3,ee:209201.23,ea:209201.23},
+  {sr:6,sec:'Governance',cn:6,ce:16693.84,ca:15174.68,en:2,ee:136164.23,ea:136164.23},
+  {sr:7,sec:'Health',cn:10,ce:40266.60,ca:35929.82,en:5,ee:319380.53,ea:104810.10},
+  {sr:8,sec:'Higher Education',cn:28,ce:71598.48,ca:47624.94,en:2,ee:49658.71,ea:49658.71},
+  {sr:9,sec:'Information Technology',cn:12,ce:48355.49,ca:39670.19,en:0,ee:0,ea:0},
+  {sr:10,sec:'Industries & Commerce',cn:2,ce:3200.00,ca:3103.37,en:0,ee:0,ea:0},
+  {sr:11,sec:'Manpower',cn:0,ce:0,ca:0,en:1,ee:25171.50,ea:23522.00},
+  {sr:12,sec:'Mass Media',cn:2,ce:4113.70,ca:4113.70,en:2,ee:39775.80,ea:39775.80},
+  {sr:13,sec:'Physical Planning & Housing',cn:10,ce:37313.26,ca:29271.76,en:5,ee:295064.14,ea:242864.54},
+  {sr:14,sec:'Social Welfare',cn:0,ce:0,ca:0,en:1,ee:64400.00,ea:64400.00},
+  {sr:15,sec:'Transport & Communications',cn:14,ce:47713.14,ca:46374.64,en:26,ee:1945280.86,ea:1932125.67},
+  {sr:16,sec:'Water Resources',cn:3,ce:13702.64,ca:12618.24,en:4,ee:95760.02,ea:95097.82},
+];
+
+const cdwpProjects = [
+  // Agriculture & Food
+  {name:'Speed Breeding Platform for Development of Climate Smart Hybrids of Crops',agency:'Pakistan Atomic Energy Commission',sector:'Agriculture & Food',cost:'990.000',fec:'65.000',receipt:'27-03-25',approved:'13-06-25',appCost:'990.000',type:'New'},
+  {name:'Establishment of Agriculture Research Institute (ARI) Sheikhupura, Punjab',agency:'Ministry of NFS&R',sector:'Agriculture & Food',cost:'3,814.374',fec:'-',receipt:'27-06-25',approved:'27-06-25',appCost:'*',type:'New'},
+  {name:'National Program for Animal Disease Surveillance, FMD and PPR Control',agency:'Ministry of NFS&R',sector:'Agriculture & Food',cost:'7,350.000',fec:'-',receipt:'20-08-25',approved:'10-10-25',appCost:'7,350.000',type:'New'},
+  // Devolution
+  {name:'Hosting Community Support Program (HCSP)',agency:'Ministry of KA&GB',sector:'Devolution & Area Dev.',cost:'2,988.675',fec:'-',receipt:'10-04-25',approved:'11-12-25',appCost:'2,988.675',type:'New'},
+  // Education
+  {name:'System Transformation of Early Education Project-Balochistan (STEP-Balochistan)',agency:'Government of Balochistan',sector:'Education',cost:'2,555.980',fec:'9.075',receipt:'23-05-25',approved:'17-06-25',appCost:'2,555.980',type:'New'},
+  {name:'Establishment of Daanish School at Baiker, District Dera Bugti Balochistan',agency:'Ministry of FE&PT',sector:'Education',cost:'2,624.852',fec:'-',receipt:'03-07-25',approved:'03-07-25',appCost:'2,583.973',type:'New'},
+  {name:'Establishment of Daanish School at Azad Jammu Kashmir (Sharda - Neelum)',agency:'Ministry of FE&PT',sector:'Education',cost:'3,042.778',fec:'-',receipt:'03-07-25',approved:'03-07-25',appCost:'3,009.734',type:'New'},
+  {name:'Establishment of Daanish School at District Zhob, Balochistan',agency:'Ministry of FE&PT',sector:'Education',cost:'3,632.405',fec:'-',receipt:'03-07-25',approved:'03-07-25',appCost:'3,587.760',type:'New'},
+  {name:'Establishment of Daanish School at District Sibi, Balochistan',agency:'Ministry of FE&PT',sector:'Education',cost:'3,351.987',fec:'-',receipt:'03-07-25',approved:'03-07-25',appCost:'3,311.109',type:'New'},
+  {name:'Establishment of Daanish School at Kan Mehterzai Qila Saifullah, Balochistan',agency:'Ministry of FE&PT',sector:'Education',cost:'2,929.856',fec:'-',receipt:'03-07-25',approved:'03-07-25',appCost:'2,848.099',type:'New'},
+  {name:'Establishment of Daanish School at District Musakhel, Balochistan',agency:'Ministry of FE&PT',sector:'Education',cost:'3,630.771',fec:'-',receipt:'03-07-25',approved:'03-07-25',appCost:'3,586.149',type:'New'},
+  {name:'Action to Strengthen Performance for Inclusive and Responsive Education Program (TA Component) - Revised',agency:'Ministry of FE&PT',sector:'Education',cost:'1,383.480',fec:'1,383.480',receipt:'21-08-25',approved:'10-09-25',appCost:'1,383.480',type:'Revised'},
+  {name:'Establishment of Daanish School at Chitral, Khyber Pakhtunkhwa',agency:'Ministry of FE&PT',sector:'Education',cost:'3,319.729',fec:'-',receipt:'13-11-25',approved:'14-11-25',appCost:'3,319.729',type:'New'},
+  {name:'Establishment of Danish School at Jia Khan Sohbatpur',agency:'Government of Balochistan',sector:'Education',cost:'3,536.262',fec:'-',receipt:'03-12-25',approved:'06-01-26',appCost:'3,536.262',type:'New'},
+  {name:'Establishment of Daanish School at Skardu, Gilgit-Baltistan',agency:'Ministry of FE&PT',sector:'Education',cost:'3,536.262',fec:'-',receipt:'05-01-26',approved:'06-01-26',appCost:'3,536.262',type:'New'},
+  {name:'Establishment of Daanish School at Azad Jammu and Kashmir (Haveli-Kahuta)',agency:'Ministry of FE&PT',sector:'Education',cost:'4,687.703',fec:'-',receipt:'26-02-26',approved:'04-03-26',appCost:'3,637.052',type:'New'},
+  // Energy
+  {name:'Establishment of New 132 kV Grid Station Puran, Tehsil Martung (Revised)',agency:'Ministry of Energy (Power Division)',sector:'Energy',cost:'1,320.620',fec:'-',receipt:'04-04-24',approved:'10-04-25',appCost:'1,257.172',type:'Revised'},
+  {name:'Construction of 132kV Grid Station in Ornach area District Khuzdar (Revised)',agency:'Ministry of Energy (Power Division)',sector:'Energy',cost:'1,186.790',fec:'-',receipt:'27-03-25',approved:'17-06-25',appCost:'1,186.780',type:'Revised'},
+  {name:'Construction of 132kV Grid Station at Kan Mehtarzai with allied transmission line - Revised',agency:'Ministry of Energy (Power Division)',sector:'Energy',cost:'441.590',fec:'-',receipt:'26-03-25',approved:'17-06-25',appCost:'441.590',type:'Revised'},
+  {name:'Construction of 3.0 MW Phullawai Hydropower project, District Neelum Valley, Azad Kashmir',agency:'Government of AJ&K',sector:'Energy',cost:'1,089.488',fec:'-',receipt:'18-07-25',approved:'10-10-25',appCost:'1,089.488',type:'New'},
+  {name:'Construction of 2.71 MW Khurshidabad Hydro Power Project',agency:'Government of AJ&K',sector:'Energy',cost:'1,271.200',fec:'-',receipt:'18-07-25',approved:'10-10-25',appCost:'1,271.200',type:'New'},
+  {name:'Construction of 1.95 MW Naushera Hydro Power Project District Muzaffarabad, AJK',agency:'Government of AJ&K',sector:'Energy',cost:'1,058.880',fec:'-',receipt:'18-07-25',approved:'10-10-25',appCost:'1,058.800',type:'New'},
+  {name:'Establishment of 132 KV Grid Station at Bin Qasim Industrial Park (BQIP), Karachi (2nd Revised)',agency:'M/o Industries & Production',sector:'Energy',cost:'6,106.410',fec:'3,152.246',receipt:'03-09-25',approved:'04-11-25',appCost:'6,106.410',type:'Revised'},
+  {name:'Rehabilitation of Khyber I, II & III, and Nagar Khas I&II, Hydropower Stations (HRE-III)',agency:'Government of Gilgit – Baltistan',sector:'Energy',cost:'5,274.510',fec:'5,026.500',receipt:'24-10-25',approved:'14-11-25',appCost:'5,274.510',type:'New'},
+  {name:'Hydropower and Renewable Energy-II, Gilgit-Baltistan - Revised',agency:'Government of Gilgit-Baltistan',sector:'Energy',cost:'3,781.476',fec:'3,254.946',receipt:'12-12-25',approved:'04-03-26',appCost:'3,781.476',type:'Revised'},
+  // Environment
+  {name:'Formulation of National Urban Strategy and Guidelines to Reduce Impacts of Urban Flooding',agency:'Climate Change Division',sector:'Environment',cost:'106.401',fec:'106.401',receipt:'17-04-25',approved:'15-05-25',appCost:'106.401',type:'New'},
+  {name:'IPF Component for Punjab Clean Air Program (PCAP)',agency:'Government of the Punjab',sector:'Environment',cost:'5,700.351',fec:'5,700.351',receipt:'28-03-25',approved:'16-05-25',appCost:'5,700.351',type:'New'},
+  {name:'Installation of Weather Surveillance Radar at Sukkur - Revised',agency:'Ministry of Defence',sector:'Environment',cost:'5,725.013',fec:'5,354.200',receipt:'13-05-25',approved:'19-06-25',appCost:'5,725.013',type:'Revised'},
+  // Governance
+  {name:'Capacity Building and Institutional Strengthening of Ministry of PD&SI (5th Revised)',agency:'Ministry of PD&SI',sector:'Governance',cost:'2,879.559',fec:'-',receipt:'17-03-25',approved:'27-06-25',appCost:'2,879.559',type:'Revised'},
+  {name:'Raising of Counter Terrorism Department (CTD) in Gilgit-Baltistan',agency:'Government of GB',sector:'Governance',cost:'1,519.160',fec:'-',receipt:'10-07-25',approved:'25-07-25',appCost:'*',type:'New'},
+  {name:'Establishment of PFMU & PSU under Punjab PRIDE Program - TA Component (1st Revised)',agency:'Government of the Punjab',sector:'Governance',cost:'3,080.620',fec:'3,080.620',receipt:'24-07-25',approved:'10-10-25',appCost:'3,080.620',type:'Revised'},
+  {name:'Enhancement of Capacity of Federal Government Entities in Preparation of Policy/Programmes/Projects',agency:'Ministry of PD&SI',sector:'Governance',cost:'5,431.500',fec:'-',receipt:'03-10-25',approved:'14-11-25',appCost:'5,431.500',type:'New'},
+  {name:'Capacity Building and Institutional Strengthening of Ministry of PD&SI (6th Revised)',agency:'Ministry of PD&SI',sector:'Governance',cost:'2,879.599',fec:'-',receipt:'06-01-26',approved:'06-01-26',appCost:'2,879.599',type:'Revised'},
+  {name:'Change of Base of National Accounts from 2015-16 to 2025-26 – Revised',agency:'Ministry PD&SI',sector:'Governance',cost:'903.400',fec:'-',receipt:'19-01-26',approved:'26-01-26',appCost:'903.400',type:'Revised'},
+  // Health
+  {name:'Establishment of Mirwaiz Molvi Muhammad Farooq Shaheed Medical College Muzaffarabad (Revised)',agency:'Government of AJ&K',sector:'Health',cost:'4,337.730',fec:'-',receipt:'06-03-25',approved:'15-05-25',appCost:'*',type:'Revised'},
+  {name:'Programme for Family Planning and Primary Health Care (LHWP-GB)',agency:'Ministry of NHSRC',sector:'Health',cost:'1,994.000',fec:'-',receipt:'28-05-25',approved:'25-07-25',appCost:'1,994.000',type:'New'},
+  {name:'National Health Support Program (Revised)',agency:'Government of the Punjab',sector:'Health',cost:'2,170.605',fec:'2,170.605',receipt:'24-09-25',approved:'10-10-25',appCost:'2,170.605',type:'Revised'},
+  {name:'Extension of Child Health Care Facilities in Southern Punjab and Pediatric Sub-specialties at Children Hospital Multan',agency:'Government of the Punjab',sector:'Health',cost:'6,401.800',fec:'21.486',receipt:'03-10-25',approved:'10-10-25',appCost:'6,401.800',type:'New'},
+  {name:'Establishment of Stroke Intervention & Expansion of Critical Care/Cardiac Facilities at PIMS (Revised)',agency:'Ministry of NHSR&C',sector:'Health',cost:'7,220.956',fec:'-',receipt:'30-10-25',approved:'14-11-25',appCost:'7,220.956',type:'Revised'},
+  {name:'Punjab Family Planning Program (Revised)',agency:'Government of the Punjab',sector:'Health',cost:'4,282.350',fec:'4,282.350',receipt:'28-11-25',approved:'11-12-25',appCost:'4,282.350',type:'Revised'},
+  {name:'Strengthening and Up-gradation of Cardiology Department at Federal Government Polyclinic (PGMI) Islamabad',agency:'Ministry of NHSR&C',sector:'Health',cost:'2,174.930',fec:'-',receipt:'02-01-26',approved:'14-01-26',appCost:'2,174.930',type:'New'},
+  {name:'Development of Integrated Disease Surveillance and Response System (IDRS) - Revised',agency:'Ministry of NHSR&C',sector:'Health',cost:'7,484.251',fec:'-',receipt:'07-01-26',approved:'14-01-26',appCost:'7,484.251',type:'Revised'},
+  {name:'Strengthening Point of Entry and Border Health Service Pakistan, Karachi - Revised',agency:'Ministry of NHSR&C',sector:'Health',cost:'2,864.982',fec:'-',receipt:'11-12-25',approved:'14-01-26',appCost:'2,864.982',type:'Revised'},
+  {name:'National Health Support Programme (KP Component) - Revised',agency:'Ministry of NHSR&C',sector:'Health',cost:'1,335.000',fec:'1,273.000',receipt:'12-01-26',approved:'04-03-26',appCost:'1,335.950',type:'Revised'},
+  // Higher Education (sample - key ones)
+  {name:'Development of National University of Medical Sciences (NUMS), Rawalpindi (2nd Revision)',agency:'HEC',sector:'Higher Education',cost:'4,038.142',fec:'492.773',receipt:'18-03-25',approved:'24-04-25',appCost:'4,038.142',type:'Revised'},
+  {name:'Establishment of Sukkur IBA University Campus at Mirpurkhas (Revised)',agency:'HEC',sector:'Higher Education',cost:'1,699.052',fec:'-',receipt:'18-02-25',approved:'24-04-25',appCost:'1,699.052',type:'Revised'},
+  {name:'Establishment of National Center for Quantum Computing (NCQC) (Revised)',agency:'HEC',sector:'Higher Education',cost:'3,318.363',fec:'1,204.828',receipt:'01-09-24',approved:'16-05-25',appCost:'3,318.363',type:'Revised'},
+  {name:'Dr. A.Q. Khan Institute of Materials & Emerging Sciences (Revised)',agency:'HEC',sector:'Higher Education',cost:'3,538.364',fec:'2,620.190',receipt:'24-05-25',approved:'13-06-25',appCost:'3,538.864',type:'Revised'},
+  {name:'Allama Muhammad Iqbal Scholarships for Bangladesh, Central Asian and Friendly countries',agency:'HEC',sector:'Higher Education',cost:'6,637.088',fec:'902.480',receipt:'30-03-25',approved:'13-08-25',appCost:'6,637.088',type:'New'},
+  {name:'Quantum Valley Pakistan (Phase-1)',agency:'Ministry of Defence',sector:'Higher Education',cost:'2,000.000',fec:'-',receipt:'30-05-25',approved:'27-06-25',appCost:'*',type:'New'},
+  {name:'Pak UK Education Gateway (Phase-II)',agency:'HEC',sector:'Higher Education',cost:'3,500.000',fec:'-',receipt:'30-05-25',approved:'26-06-25',appCost:'*',type:'New'},
+  {name:'Establishment of University of Turbat (Phase-II) (Revised)',agency:'HEC',sector:'Higher Education',cost:'2,050.330',fec:'-',receipt:'21-09-25',approved:'14-11-25',appCost:'2,050.330',type:'Revised'},
+  {name:'Prime Minister\'s Scheme for Enabling Youth with Physical Challenges at HEIs',agency:'HEC',sector:'Higher Education',cost:'1,846.410',fec:'-',receipt:'24-01-26',approved:'04-03-26',appCost:'1,281.432',type:'New'},
+  // IT
+  {name:'Prime Minister\'s Initiatives - Support for IT Startups, Specialized IT Trainings and Venture Capital - Revised',agency:'M/o Information Technology and Telecom Div.',sector:'Information Technology',cost:'5,000.000',fec:'-',receipt:'14-03-25',approved:'10-04-25',appCost:'5,000.000',type:'Revised'},
+  {name:'National Semiconductor HR Development Program (NSHRDP) Phase-I',agency:'M/o Information Technology and Telecom Div.',sector:'Information Technology',cost:'4,844.000',fec:'-',receipt:'27-03-25',approved:'10-04-25',appCost:'4,844.000',type:'New'},
+  {name:'Gwadar Safe City Project',agency:'Government of Balochistan',sector:'Information Technology',cost:'7,486.786',fec:'-',receipt:'24-03-25',approved:'24-04-25',appCost:'7,486.786',type:'New'},
+  {name:'Revamping IT Industry Landscape',agency:'Information Technology Div.',sector:'Information Technology',cost:'7,426.887',fec:'-',receipt:'21-02-25',approved:'15-05-25',appCost:'6,948.937',type:'New'},
+  {name:'Expansion of Safe City, Islamabad',agency:'Ministry of Interior',sector:'Information Technology',cost:'7,499.339',fec:'-',receipt:'12-05-25',approved:'16-05-25',appCost:'7,499.399',type:'New'},
+  {name:'Development of Pakistan Lunar Exploration Rover (PLExR) for Chang\'E-8 Mission',agency:'SUPARCO',sector:'Information Technology',cost:'2,535.000',fec:'1,450.000',receipt:'20-03-25',approved:'21-05-25',appCost:'2,535.000',type:'New'},
+  {name:'Pakistan Manned Space Mission',agency:'SUPARCO',sector:'Information Technology',cost:'2,243.200',fec:'2,061.840',receipt:'20-03-25',approved:'21-05-25',appCost:'2,190.890',type:'New'},
+  {name:'Automation of Post Office (Revised)',agency:'Ministry of Communications',sector:'Information Technology',cost:'6,644.830',fec:'-',receipt:'31-10-25',approved:'14-11-25',appCost:'*',type:'Revised'},
+  // Industries
+  {name:'1000 Industrial Stitching Units (Phase-II)',agency:'M/o Industries & Production',sector:'Industries & Commerce',cost:'1,950.000',fec:'-',receipt:'27-03-25',approved:'21-05-25',appCost:'1,853.368',type:'New'},
+  {name:'Acquisition of Land for Establishment of SME Facilitation Centers at Various Locations',agency:'M/o Industries & Production',sector:'Industries & Commerce',cost:'1,250.000',fec:'-',receipt:'27-03-25',approved:'21-05-25',appCost:'1,250.000',type:'New'},
+  // Mass Media
+  {name:'Establishment of National Center for Brand Development (1st Revised)',agency:'Ministry of PD&SI',sector:'Mass Media',cost:'1,850.000',fec:'360.000',receipt:'26-08-25',approved:'10-09-25',appCost:'1,850.000',type:'Revised'},
+  {name:'Development Communication Project',agency:'Ministry of PD&SI',sector:'Mass Media',cost:'2,263.702',fec:'-',receipt:'11-11-25',approved:'06-01-26',appCost:'2,263.702',type:'New'},
+  // PP&H
+  {name:'Construction of Customs Complex at Sost (Part A) and Customs Digital Enforcement Stations (Revised)',agency:'Federal Board of Revenue',sector:'Physical Planning & Housing',cost:'1,220.870',fec:'-',receipt:'24-03-25',approved:'10-04-25',appCost:'1,220.870',type:'Revised'},
+  {name:'AJK Legislative Assembly Complex (Revised)',agency:'Government of AJ&K',sector:'Physical Planning & Housing',cost:'6,917.110',fec:'-',receipt:'02-05-25',approved:'13-08-25',appCost:'6,741.740',type:'Revised'},
+  {name:'Construction of New Balochistan Assembly at Quetta',agency:'Government of Balochistan',sector:'Physical Planning & Housing',cost:'9,768.590',fec:'-',receipt:'19-11-25',approved:'06-01-26',appCost:'7,500.000',type:'New'},
+  {name:'Hyderabad Urban Infrastructure Development Package - Revised',agency:'Ministry of Housing & Works',sector:'Physical Planning & Housing',cost:'5,000.000',fec:'-',receipt:'01-09-25',approved:'06-02-26',appCost:'*',type:'Revised'},
+  {name:'Pakistan Audit & Accounts Academy (PAAA) Islamabad - Revised',agency:'Finance Division',sector:'Physical Planning & Housing',cost:'3,106.030',fec:'-',receipt:'28-10-25',approved:'04-03-26',appCost:'2,739.470',type:'Revised'},
+  // Transport
+  {name:'Rehabilitation of Track Maintenance Machines (Revised)',agency:'Ministry of Railways',sector:'Transport & Communications',cost:'5,312.280',fec:'-',receipt:'20-01-25',approved:'16-05-25',appCost:'5,312.280',type:'Revised'},
+  {name:'Feasibility Study for Trans Afghan Rail connectivity from Kharlachi to Mazar-e-Sharif (677 Kms)',agency:'Ministry of Railways',sector:'Transport & Communications',cost:'1,401.400',fec:'1,401.400',receipt:'29-03-25',approved:'13-06-25',appCost:'1,401.400',type:'New'},
+  {name:'Extension of Margalla Highway from G.T Road (N-5) to Motorway (M-1) - Revised',agency:'Ministry of Communications',sector:'Transport & Communications',cost:'7,106.374',fec:'-',receipt:'05-03-25',approved:'13-06-25',appCost:'7,106.374',type:'Revised'},
+  {name:'Detailed Engineering Design of ML-1 Rohri–Khanpur-Multan (449 km) with ADB PRF',agency:'Ministry of Railways',sector:'Transport & Communications',cost:'3,217.566',fec:'1,562.860',receipt:'01-09-25',approved:'10-10-25',appCost:'2,946.550',type:'New'},
+  {name:'Up-Gradation of Air Traffic Management & Voice Communication Systems at JIAP Karachi & AIIAP Lahore (1st Revised)',agency:'Ministry of Defence',sector:'Transport & Communications',cost:'7,812.020',fec:'5,121.594',receipt:'03-09-25',approved:'04-11-25',appCost:'7,491.560',type:'Revised'},
+  {name:'Immediate Track Safety Works on Rohri-Khanpur Section in Sukkur Division (1st Revised)',agency:'Ministry of Railways',sector:'Transport & Communications',cost:'7,254.481',fec:'-',receipt:'10-11-25',approved:'06-01-26',appCost:'7,254.481',type:'Revised'},
+  {name:'Construction of Mirpur Mathelo Interchange on Sukkur Multan Motorway (M-5) - Revised',agency:'Ministry of Communications',sector:'Transport & Communications',cost:'2,159.090',fec:'-',receipt:'25-10-25',approved:'26-01-26',appCost:'2,029.950',type:'Revised'},
+  // Water
+  {name:'Construction of Ghand Dam Baker Dera Bugti',agency:'Government of Balochistan',sector:'Water Resources',cost:'6,377.999',fec:'-',receipt:'26-06-25',approved:'27-06-25',appCost:'6,022.536',type:'New'},
+  {name:'Kachhi Canal Project - Restoration of Flood Damages 2022 (1st Revised)',agency:'Ministry of Water Resources',sector:'Water Resources',cost:'5,651.314',fec:'-',receipt:'07-05-25',approved:'10-10-25',appCost:'4,922.380',type:'Revised'},
+  {name:'Project Readiness Financing (PRF) for Punjab Water Resources Management - Revised',agency:'Government of the Punjab',sector:'Water Resources',cost:'1,673.328',fec:'1,589.762',receipt:'06-10-25',approved:'11-12-25',appCost:'1,673.328',type:'Revised'},
+];
+
+const ecnecProjects = [
+  {name:'Punjab Resilient and Inclusive Agriculture Transformation (PRIAT) - Revised',agency:'Government of the Punjab',sector:'Agriculture & Food',cost:'80,423.867',fec:'55,791.471',receipt:'01-10-25',approved:'15-10-25',appCost:'80,423.867',type:'Revised'},
+  {name:'Punjab Climate Resilient and Low Carbon Agricultural Mechanization Project (P-CLAMP)',agency:'Government of the Punjab',sector:'Agriculture & Food',cost:'36,120.000',fec:'34,720.000',receipt:'23-09-25',approved:'15-10-25',appCost:'36,120.000',type:'New'},
+  {name:'Balochistan Livelihoods and Entrepreneurship Project - Revised',agency:'Ministry of PD&SI',sector:'Devolution & Area Dev.',cost:'12,461.661',fec:'-',receipt:'23-05-25',approved:'15-10-25',appCost:'12,461.661',type:'Revised'},
+  {name:'Sindh Early Learning Enhancement Through Classroom Transformation - Revised',agency:'Government of Sindh',sector:'Education',cost:'46,570.560',fec:'43,096.720',receipt:'12-11-24',approved:'14-05-25',appCost:'46,570.560',type:'Revised'},
+  {name:'Getting Results: Access and Delivery of Quality Education Services in Balochistan (Grades) New',agency:'Government of Balochistan',sector:'Education',cost:'28,224.000',fec:'28,224.000',receipt:'03-03-25',approved:'15-10-25',appCost:'28,224.000',type:'New'},
+  {name:'System Transformation Grant (STG)',agency:'Government of the Punjab',sector:'Education',cost:'10,805.720',fec:'10,805.720',receipt:'20-06-25',approved:'15-10-25',appCost:'10,805.720',type:'New'},
+  {name:'Construction/Reconstruction of Existing Schools in Sindh Affected under Rain/Flood 2022 (833 Units) - Revised',agency:'Government of Sindh',sector:'Education',cost:'12,337.138',fec:'-',receipt:'24-04-25',approved:'24-11-25',appCost:'12,337.138',type:'Revised'},
+  {name:'Prime Minister\'s Pakistan Fund for Education (Revised)',agency:'Ministry of FE&PT',sector:'Education',cost:'14,000.000',fec:'-',receipt:'02-10-25',approved:'19-12-25',appCost:'14,000.000',type:'Revised'},
+  {name:'220 kV Transmission System Network Reinforcement in Islamabad and Burhan Area (Revised)',agency:'Ministry of Energy (Power Div.)',sector:'Energy',cost:'11,315.550',fec:'5,742.590',receipt:'23-12-24',approved:'14-05-25',appCost:'11,138.790',type:'Revised'},
+  {name:'Development of 100 MWP Distributed Solar Photovoltaic (DPV) Plants in Gilgit-Baltistan New',agency:'Government of Gilgit – Baltistan',sector:'Energy',cost:'26,687.400',fec:'-',receipt:'31-01-25',approved:'07-08-25',appCost:'24,957.290',type:'New'},
+  {name:'16 MW Hydropower Project Nalter-III Gilgit (3rd Revised)',agency:'Government of Gilgit – Baltistan',sector:'Energy',cost:'10,671.357',fec:'2,462.796',receipt:'16-04-25',approved:'07-08-25',appCost:'10,671.357',type:'Revised'},
+  {name:'500 kV Double Circuit Transmission Line from Ghazi Barotha to Faisalabad West New',agency:'M/o Energy (Power Div.)',sector:'Energy',cost:'94,164.400',fec:'67,543.230',receipt:'04-03-25',approved:'19-12-25',appCost:'94,164.400',type:'New'},
+  {name:'Dasu Hydropower Project (Stage-I) – Revised',agency:'Ministry of Water Resources',sector:'Energy',cost:'1,737,881.000',fec:'711,452.000',receipt:'21-02-25',approved:'19-12-25',appCost:'1,737,881.000',type:'Revised'},
+  {name:'Upgradation/Extension of NTDC\'s Telecommunication & SCADA System - Revised',agency:'Ministry of Energy (Power Division)',sector:'Energy',cost:'50,374.200',fec:'43,515.450',receipt:'19-12-25',approved:'15-01-26',appCost:'50,374.000',type:'Revised'},
+  {name:'Harpo Hydropower Project (34.5 MW) - Revised',agency:'Ministry of Energy (Power Division)',sector:'Energy',cost:'34,340.185',fec:'11,328.960',receipt:'30-08-25',approved:'02-02-26',appCost:'34,302.690',type:'Revised'},
+  {name:'Up-Scaling of Green Pakistan Programme (Revised)',agency:'Climate Change Div.',sector:'Environment',cost:'122,146.000',fec:'-',receipt:'29-03-24',approved:'07-08-25',appCost:'122,146.000',type:'Revised'},
+  {name:'Sindh Coastal Resilience Project (SCRP) – Livelihood and Community Infrastructure',agency:'Government of Sindh',sector:'Environment',cost:'30,915.227',fec:'28,000.000',receipt:'05-11-24',approved:'15-10-25',appCost:'30,915.227',type:'New'},
+  {name:'Sindh Coastal Resilience Sector Project (SCRP)',agency:'Government of Sindh',sector:'Environment',cost:'56,140.000',fec:'50,540.000',receipt:'02-11-25',approved:'19-12-25',appCost:'56,140.000',type:'New'},
+  {name:'Development of Integrated Transit Trade Management System (ITTMS) under CAREC-RIBS',agency:'Federal Board of Revenue',sector:'Governance',cost:'95,406.140',fec:'77,173.880',receipt:'03-12-24',approved:'14-05-25',appCost:'95,406.140',type:'New'},
+  {name:'Investment Project Financing (IPF) Component of Pakistan Raises Revenue Project (2nd Revised)',agency:'Revenue Division',sector:'Governance',cost:'40,758.086',fec:'40,758.086',receipt:'02-05-25',approved:'07-08-25',appCost:'40,758.085',type:'Revised'},
+  {name:'Jinnah Medical Complex & Research Centre',agency:'Ministry of NHSR&C',sector:'Health',cost:'212,734.000',fec:'-',receipt:'07-08-25',approved:'22-08-25',appCost:'-',type:'New'},
+  {name:'Establishment of Nawaz Sharif Institute of Cancer Treatment and Research, Lahore',agency:'Government of the Punjab',sector:'Health',cost:'74,920.140',fec:'-',receipt:'16-05-25',approved:'15-10-25',appCost:'74,920.140',type:'New'},
+  {name:'Khyber Pakhtunkhwa Human Capital Investment Project (Health Component) - Revised',agency:'Government of KP',sector:'Health',cost:'18,137.420',fec:'18,137.420',receipt:'20-08-25',approved:'24-11-25',appCost:'18,137.420',type:'Revised'},
+  {name:'Emergency Plan for Polio Eradication (4th Revised)',agency:'Ministry of NHS&RC',sector:'Health',cost:'639.540',fec:'-',receipt:'07-08-25',approved:'24-11-25',appCost:'639.540',type:'Revised'},
+  {name:'Expansion of Armed Forces Institute of Cardiology & NIHD, Rawalpindi',agency:'Ministry of Defence',sector:'Health',cost:'12,949.434',fec:'6,000.000',receipt:'03-11-25',approved:'02-02-26',appCost:'11,113.000',type:'New'},
+  {name:'CM Punjab Laptop Program',agency:'Government of the Punjab',sector:'Higher Education',cost:'27,000.000',fec:'-',receipt:'25-04-25',approved:'07-08-25',appCost:'27,000.000',type:'New'},
+  {name:'Higher Education Development in Pakistan (Revised)',agency:'HEC',sector:'Higher Education',cost:'22,658.707',fec:'21,182.407',receipt:'05-08-24',approved:'07-08-25',appCost:'22,658.707',type:'Revised'},
+  {name:'Pakistan Technicians Workforce Development Programme (Revised)',agency:'M/o Overseas Pakistani & HRD',sector:'Manpower',cost:'25,171.500',fec:'-',receipt:'23-07-25',approved:'22-08-25',appCost:'23,522.000',type:'Revised'},
+  {name:'Upgradation of Pakistan Television Broadcasting Equipment',agency:'Ministry of Information & Broadcasting',sector:'Mass Media',cost:'27,000.000',fec:'-',receipt:'09-06-25',approved:'22-08-25',appCost:'27,000.000',type:'New'},
+  {name:'Establishment of Pakistan National Broadcast House',agency:'Ministry of Information & Broadcasting',sector:'Mass Media',cost:'12,775.800',fec:'-',receipt:'12-06-25',approved:'15-10-25',appCost:'12,775.800',type:'New'},
+  {name:'Islamabad Mass Transit Project (Green Line, Phase-I)',agency:'Capital Administration & Development Division',sector:'Physical Planning & Housing',cost:'158,553.510',fec:'136,723.000',receipt:'18-08-25',approved:'22-08-25',appCost:'158,553.510',type:'New'},
+  {name:'Construction of Ravi Riverfront Urban Development Project (Phase-II)',agency:'Government of the Punjab',sector:'Physical Planning & Housing',cost:'96,475.200',fec:'-',receipt:'25-05-25',approved:'15-10-25',appCost:'96,475.200',type:'New'},
+  {name:'Up-gradation of Sanitation & Water Supply in Khyber Pakhtunkhwa - Revised',agency:'Government of KP',sector:'Physical Planning & Housing',cost:'39,835.840',fec:'33,670.040',receipt:'22-07-25',approved:'24-11-25',appCost:'39,835.840',type:'Revised'},
+  {name:'Construction of Karachi Circular Railway (KCR)',agency:'Ministry of Railways',sector:'Physical Planning & Housing',cost:'52,000.000',fec:'-',receipt:'01-10-25',approved:'19-12-25',appCost:'52,000.000',type:'New'},
+  {name:'National Tourism Development Programme',agency:'Ministry of Tourism',sector:'Physical Planning & Housing',cost:'35,200.000',fec:'-',receipt:'15-09-25',approved:'02-02-26',appCost:'35,000.000',type:'New'},
+  {name:'National Social Welfare Endowment Fund',agency:'Ministry of Social Welfare',sector:'Social Welfare',cost:'64,400.000',fec:'-',receipt:'20-07-25',approved:'22-08-25',appCost:'64,400.000',type:'New'},
+  {name:'Upgradation of ML-1 Lahore-Karachi Railway (Phase-I: Lahore-Khanewal)',agency:'Ministry of Railways',sector:'Transport & Communications',cost:'386,580.000',fec:'288,000.000',receipt:'01-04-25',approved:'14-05-25',appCost:'386,580.000',type:'New'},
+  {name:'Construction of Peshawar-DI Khan Motorway (365 Km)',agency:'Ministry of Communications',sector:'Transport & Communications',cost:'352,000.000',fec:'-',receipt:'15-05-25',approved:'07-08-25',appCost:'352,000.000',type:'New'},
+  {name:'Lahore-Sahiwal-Bahawalnagar Motorway (295 Km)',agency:'Ministry of Communications',sector:'Transport & Communications',cost:'465,172.329',fec:'-',receipt:'02-12-25',approved:'02-12-25',appCost:'465,172.329',type:'New'},
+  {name:'Gwadar Smart Port City Master Plan - Phase I',agency:'Ministry of Maritime Affairs',sector:'Transport & Communications',cost:'45,800.000',fec:'38,000.000',receipt:'10-06-25',approved:'22-08-25',appCost:'45,800.000',type:'New'},
+  {name:'Construction of Khawazakhela-Besham Expressway (48 Km) Revised',agency:'Ministry of Communications',sector:'Transport & Communications',cost:'116,634.512',fec:'-',receipt:'31-03-26',approved:'31-03-26',appCost:'116,634.512',type:'Revised'},
+  {name:'National Highway N-5 Rehabilitation Hala-Moro (66 km) China Grant',agency:'Communications Division',sector:'Transport & Communications',cost:'27,972.604',fec:'25,425.204',receipt:'10-04-25',approved:'10-04-25',appCost:'27,972.604',type:'New'},
+  {name:'Land Acquisition for ML-1 Karachi-Rohri Section',agency:'Ministry of Railways',sector:'Transport & Communications',cost:'2,902.330',fec:'-',receipt:'10-11-25',approved:'20-11-25',appCost:'2,902.330',type:'New'},
+  {name:'Rehabilitation of Track Between Hyderabad and New Chhor (Phase-I)',agency:'Railways Division',sector:'Transport & Communications',cost:'7,447.925',fec:'-',receipt:'31-03-26',approved:'31-03-26',appCost:'7,447.925',type:'New'},
+  {name:'Construction of Jalalpur Irrigation Canal Project (Revised)',agency:'Government of Punjab',sector:'Water Resources',cost:'63,195.593',fec:'55,948.823',receipt:'18-03-26',approved:'18-03-26',appCost:'63,195.593',type:'Revised'},
+  {name:'Construction of Suri Storage Dam District Derabugti',agency:'Ministry of PD&SI',sector:'Water Resources',cost:'22,098.230',fec:'-',receipt:'26-03-26',approved:'30-03-26',appCost:'22,098.230',type:'New'},
+  {name:'Karezat Dam Project District Pishin',agency:'Ministry of PD&SI',sector:'Water Resources',cost:'16,541.194',fec:'-',receipt:'29-03-26',approved:'29-03-26',appCost:'16,541.194',type:'New'},
+  {name:'National Master Plan For Flood Telemetry Network (Phase-I)',agency:'Ministry of Water Resources',sector:'Water Resources',cost:'26,266.000',fec:'-',receipt:'23-07-25',approved:'25-08-25',appCost:'26,266.000',type:'New'},
+];
+
+const cdwpMeetings=['10-04-2025','24-04-2025','15-05-2025','16-05-2025','21-05-2025','13-06-2025','17-06-2025','19-06-2025','26-06-2025','27-06-2025','03-07-2025','25-07-2025','13-08-2025','10-09-2025','19-09-2025','10-10-2025','04-11-2025','14-11-2025','11-12-2025','06-01-2026','14-01-2026','26-01-2026','06-02-2026','04-03-2026'];
+const ecnecMeetings=['14-05-2025','07-08-2025','22-08-2025','15-10-2025','24-11-2025','19-12-2025','15-01-2026','02-02-2026'];
+
+// ===== COLORS =====
+const sectorColors=['#185FA5','#1D9E75','#BA7517','#993C1D','#534AB7','#D4537E','#0F6E56','#3C3489','#1D9E75','#888780','#E24B4A','#BA7517','#378ADD','#639922','#185FA5','#634AB7'];
+const sColors10=['#185FA5','#1D9E75','#BA7517','#993C1D','#534AB7','#D4537E','#0F6E56','#E24B4A','#378ADD','#639922','#3C3489','#888780','#BA7517','#185FA5','#534AB7','#1D9E75'];
+
+// ===== RENDER SECTOR TABLE =====
+const stbody=document.getElementById('sector-table-body');
+let totCN=0,totCE=0,totCA=0,totEN=0,totEE=0,totEA=0;
+sectorTableData.forEach(r=>{
+  totCN+=r.cn;totCE+=r.ce;totCA+=r.ca;totEN+=r.en;totEE+=r.ee;totEA+=r.ea;
+  stbody.innerHTML+=`<tr>
+    <td>${r.sr}</td><td>${r.sec}</td>
+    <td>${r.cn||'-'}</td><td>${r.ce?r.ce.toLocaleString():'-'}</td><td>${r.ca?r.ca.toLocaleString():'-'}</td>
+    <td>${r.en||'-'}</td><td>${r.ee?r.ee.toLocaleString():'-'}</td><td>${r.ea?r.ea.toLocaleString():'-'}</td>
+  </tr>`;
+});
+stbody.innerHTML+=`<tr>
+  <td colspan="2"><b>Total</b></td>
+  <td><b>${totCN}</b></td><td><b>${totCE.toLocaleString()}</b></td><td><b>${totCA.toLocaleString()}</b></td>
+  <td><b>${totEN}</b></td><td><b>${totEE.toLocaleString()}</b></td><td><b>${totEA.toLocaleString()}</b></td>
+</tr>`;
+
+// ===== RENDER PROJECT TABLES =====
+const sectorBadgeColor={'Agriculture & Food':'b-green','Energy':'b-amber','Transport & Communications':'b-blue','Higher Education':'b-purple','Health':'b-coral','Education':'b-green','Environment':'b-green','Governance':'b-gray','Information Technology':'b-blue','Industries & Commerce':'b-amber','Physical Planning & Housing':'b-gray','Mass Media':'b-purple','Water Resources':'b-blue','Devolution & Area Dev.':'b-green','Manpower':'b-amber','Social Welfare':'b-coral'};
+
+let cdwpFiltered=[...cdwpProjects], ecnecFiltered=[...ecnecProjects];
+
+function renderTable(which,data){
+  const tbody=document.getElementById(which+'-tbody');
+  const count=document.getElementById(which+'-count');
+  tbody.innerHTML='';
+  if(count) count.textContent=data.length+' projects — Click any row for full details';
+  data.forEach((p,i)=>{
+    const bc=sectorBadgeColor[p.sector]||'b-gray';
+    const revTag=p.type==='Revised'?'<span class="badge b-amber" style="margin-left:4px;font-size:9px;">Rev</span>':'';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${i+1}</td>
+      <td class="td-name">${p.name}${revTag}</td>
+      <td><span class="badge ${bc}">${p.sector}</span></td>
+      <td style="max-width:180px;font-size:11px;">${p.agency}</td>
+      <td style="text-align:right;">${p.cost}</td>
+      <td style="text-align:right;font-weight:600;">${p.appCost}</td>
+      <td>${p.approved}</td>
+      <td><span class="badge b-green">Approved</span></td>`;
+    tr.onclick=()=>showDetail(p,which);
+    tbody.appendChild(tr);
+  });
+}
+
+renderTable('cdwp',cdwpProjects);
+renderTable('ecnec',ecnecProjects);
+
+// ===== SECTOR FILTERS =====
+function makeSectorFilter(which,projects){
+  const sectors=[...new Set(projects.map(p=>p.sector))].sort();
+  const container=document.getElementById(which+'-sector-filter');
+  container.innerHTML='<button class="tf-btn active" onclick="filterSector(\''+which+'\',\'All\',this)">All</button>';
+  sectors.forEach(s=>{
+    container.innerHTML+=`<button class="tf-btn" onclick="filterSector('${which}','${s}',this)">${s}</button>`;
+  });
+}
+makeSectorFilter('cdwp',cdwpProjects);
+makeSectorFilter('ecnec',ecnecProjects);
+
+function filterSector(which,sector,btn){
+  document.querySelectorAll('#'+which+'-sector-filter .tf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const base=which==='cdwp'?cdwpProjects:ecnecProjects;
+  const filtered=sector==='All'?base:base.filter(p=>p.sector===sector);
+  const search=document.getElementById(which+'-search').value.toLowerCase();
+  renderTable(which,search?filtered.filter(p=>p.name.toLowerCase().includes(search)||p.agency.toLowerCase().includes(search)):filtered);
+}
+
+function filterTable(which){
+  const search=document.getElementById(which+'-search').value.toLowerCase();
+  const base=which==='cdwp'?cdwpProjects:ecnecProjects;
+  renderTable(which,search?base.filter(p=>p.name.toLowerCase().includes(search)||p.agency.toLowerCase().includes(search)):base);
+}
+
+// ===== DETAIL PANEL =====
+function showDetail(p,which){
+  const overlay=document.getElementById('detail-overlay');
+  const color=which==='cdwp'?'var(--blue)':'var(--purple)';
+  document.getElementById('d-tag').textContent=which.toUpperCase()+' Approved';
+  document.getElementById('d-tag').style.cssText=`background:${which==='cdwp'?'var(--blue-l)':'var(--purple-l)'};color:${color};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;`;
+  document.getElementById('d-name').textContent=p.name;
+  document.getElementById('d-agency').textContent='Sponsoring Agency: '+p.agency;
+  document.getElementById('d-sector').textContent=p.sector;
+  document.getElementById('d-cost').textContent='Rs. '+p.cost+' M';
+  document.getElementById('d-approved').textContent=p.appCost==='*'?'To be determined':'Rs. '+p.appCost+' M';
+  document.getElementById('d-date').textContent=p.approved;
+  document.getElementById('d-receipt').textContent=p.receipt;
+  document.getElementById('d-fec').textContent=p.fec==='-'?'None / Not applicable':'Rs. '+p.fec+' M';
+  // bar
+  const costNum=parseFloat(p.cost.replace(/,/g,''));
+  const appNum=p.appCost==='*'?null:parseFloat(p.appCost.replace(/,/g,''));
+  if(appNum&&costNum){
+    const pct=Math.round((appNum/costNum)*100);
+    document.getElementById('d-bar').style.width=Math.min(pct,100)+'%';
+    document.getElementById('d-bar').style.background=pct>100?'var(--coral)':'var(--green)';
+    document.getElementById('d-bar-text').textContent='Approved cost is '+pct+'% of estimated PC-I cost';
+    document.getElementById('d-barwrap').style.display='block';
+  } else {
+    document.getElementById('d-barwrap').style.display='none';
+  }
+  document.getElementById('d-note').textContent=p.type==='Revised'?'This is a revised PC-I. The project has been previously processed and this represents an updated cost/scope.':'New project approved for the first time during 2025-26 reporting period.';
+  overlay.classList.add('open');
+}
+function closeDetail(e){if(e.target===document.getElementById('detail-overlay'))closeDetailPanel();}
+function closeDetailPanel(){document.getElementById('detail-overlay').classList.remove('open');}
+
+// ===== PAGE NAV =====
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== MEETINGS TIMELINE =====
+cdwpMeetings.forEach(d=>{
+  document.getElementById('cdwp-meetings').innerHTML+=`<div class="tm-item">${d}</div>`;
+});
+ecnecMeetings.forEach(d=>{
+  document.getElementById('ecnec-meetings').innerHTML+=`<div class="tm-item ecnec">${d}</div>`;
+});
+
+// ===== CHARTS =====
+const sectors=sectorTableData.map(r=>r.sec);
+const cdwpCounts=sectorTableData.map(r=>r.cn);
+const ecnecCounts=sectorTableData.map(r=>r.en);
+const cdwpApproved=sectorTableData.map(r=>r.ca);
+const ecnecApproved=sectorTableData.map(r=>r.ea);
+
+// Sector bar count
+new Chart(document.getElementById('sectorBarChart'),{
+  type:'bar',
+  data:{labels:sectors,datasets:[
+    {label:'CDWP',data:cdwpCounts,backgroundColor:'#185FA5CC',borderRadius:4},
+    {label:'ECNEC',data:ecnecCounts,backgroundColor:'#534AB7CC',borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9},maxRotation:45}},y:{beginAtZero:true,ticks:{stepSize:5}}}}
+});
+
+// Sector cost
+const shortSec=sectors.map(s=>s.length>14?s.substring(0,12)+'..':s);
+new Chart(document.getElementById('costBarChart'),{
+  type:'bar',
+  data:{labels:shortSec,datasets:[
+    {label:'CDWP (Rs.M)',data:cdwpApproved,backgroundColor:'#1D9E75CC',borderRadius:4},
+    {label:'ECNEC (Rs.M)',data:ecnecApproved.map(v=>v/1000),backgroundColor:'#BA7517CC',borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9},maxRotation:45}},y:{beginAtZero:true}}}
+});
+
+// CDWP pie
+const cdwpNonZero=sectorTableData.filter(r=>r.ca>0);
+const pieLegendCDWP=document.getElementById('cdwp-pie-legend');
+cdwpNonZero.forEach((r,i)=>{
+  const col=sColors10[i%sColors10.length];
+  pieLegendCDWP.innerHTML+=`<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:${col};display:inline-block;"></span>${r.sec.length>14?r.sec.substr(0,12)+'..':r.sec} ${Math.round((r.ca/totCA)*100)}%</span>`;
+});
+new Chart(document.getElementById('cdwpPieChart'),{
+  type:'doughnut',
+  data:{labels:cdwpNonZero.map(r=>r.sec),datasets:[{data:cdwpNonZero.map(r=>r.ca),backgroundColor:sColors10,borderWidth:2,borderColor:'#fff'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
+});
+
+// ECNEC pie
+const ecnecNonZero=sectorTableData.filter(r=>r.ea>0);
+const pieLegendECNEC=document.getElementById('ecnec-pie-legend');
+ecnecNonZero.forEach((r,i)=>{
+  const col=sColors10[i%sColors10.length];
+  pieLegendECNEC.innerHTML+=`<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:${col};display:inline-block;"></span>${r.sec.length>14?r.sec.substr(0,12)+'..':r.sec} ${Math.round((r.ea/totEA)*100)}%</span>`;
+});
+new Chart(document.getElementById('ecnecPieChart'),{
+  type:'doughnut',
+  data:{labels:ecnecNonZero.map(r=>r.sec),datasets:[{data:ecnecNonZero.map(r=>r.ea),backgroundColor:sColors10,borderWidth:2,borderColor:'#fff'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
+});
+
+// Candlestick-style (Grouped bar: Received/Approved/Pending per quarter)
+new Chart(document.getElementById('candleChart'),{
+  type:'bar',
+  data:{
+    labels:['Q1 (Apr-Jun)','Q2 (Jul-Sep)','Q3 (Oct-Dec)','Q4 (Jan-Mar)'],
+    datasets:[
+      {label:'Received',data:[112,115,118,104],backgroundColor:'#185FA5CC',borderRadius:4},
+      {label:'Approved (CDWP+ECNEC)',data:[42,52,58,44],backgroundColor:'#1D9E75CC',borderRadius:4},
+      {label:'Returned/Pending',data:[70,63,60,60],backgroundColor:'#BA7517CC',borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},scales:{x:{ticks:{font:{size:11}}},y:{beginAtZero:true,stacked:false}}}
+});
+
+// Disposition doughnut
+new Chart(document.getElementById('dispositionChart'),{
+  type:'doughnut',
+  data:{
+    labels:['CDWP Approved (116)','ECNEC Approved (72)','Recommended→ECNEC (21)','Returned by CDWP (3)','Returned Preliminary (271)','Under Appraisal (226)'],
+    datasets:[{
+      data:[116,72,21,3,271,226],
+      backgroundColor:['#1D9E75','#534AB7','#BA7517','#993C1D','#E24B4A','#888780'],
+      borderWidth:2,borderColor:'#fff'
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}}}
+});
+
+// CDWP sector charts on CDWP page
+new Chart(document.getElementById('cdwpSectorCost'),{
+  type:'bar',
+  data:{labels:sectorTableData.filter(r=>r.ca>0).map(r=>r.sec.length>16?r.sec.substr(0,14)+'..':r.sec),
+  datasets:[{label:'Approved Cost (Rs.M)',data:sectorTableData.filter(r=>r.ca>0).map(r=>r.ca),backgroundColor:'#185FA5CC',borderRadius:4}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}}}
+});
+new Chart(document.getElementById('cdwpSectorCount'),{
+  type:'bar',
+  data:{labels:sectorTableData.filter(r=>r.cn>0).map(r=>r.sec.length>16?r.sec.substr(0,14)+'..':r.sec),
+  datasets:[{label:'No. of Schemes',data:sectorTableData.filter(r=>r.cn>0).map(r=>r.cn),backgroundColor:sColors10,borderRadius:4}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true},y:{ticks:{font:{size:10}}}}}
+});
+
+// ECNEC sector charts
+new Chart(document.getElementById('ecnecSectorCost'),{
+  type:'bar',
+  data:{labels:sectorTableData.filter(r=>r.ea>0).map(r=>r.sec.length>16?r.sec.substr(0,14)+'..':r.sec),
+  datasets:[{label:'Approved Cost (Rs.B)',data:sectorTableData.filter(r=>r.ea>0).map(r=>+(r.ea/1000).toFixed(1)),backgroundColor:'#534AB7CC',borderRadius:4}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}}}
+});
+new Chart(document.getElementById('ecnecSectorCount'),{
+  type:'bar',
+  data:{labels:sectorTableData.filter(r=>r.en>0).map(r=>r.sec.length>16?r.sec.substr(0,14)+'..':r.sec),
+  datasets:[{label:'No. of Schemes',data:sectorTableData.filter(r=>r.en>0).map(r=>r.en),backgroundColor:sColors10,borderRadius:4}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true},y:{ticks:{font:{size:10}}}}}
+});
+
+// Meetings per month chart
+const months=['Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'];
+const cdwpPerMonth=[2,3,5,2,1,2,1,2,1,3,1,1];
+const ecnecPerMonth=[0,1,0,0,2,0,1,1,1,1,1,0];
+new Chart(document.getElementById('meetingsChart'),{
+  type:'bar',
+  data:{labels:months,datasets:[
+    {label:'CDWP Meetings',data:cdwpPerMonth,backgroundColor:'#185FA5CC',borderRadius:4},
+    {label:'ECNEC Meetings',data:ecnecPerMonth,backgroundColor:'#534AB7CC',borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:12}}},scales:{x:{ticks:{font:{size:11}}},y:{beginAtZero:true,ticks:{stepSize:1}}}}
+});
+</script>
+
+<script>
+// ===== UPLOAD MODAL =====
+function openUpload(){document.getElementById('upload-overlay').classList.add('open');}
+function closeUpload(){
+  document.getElementById('upload-overlay').classList.remove('open');
+  resetUpload();
+}
+function closeUploadOutside(e){if(e.target===document.getElementById('upload-overlay'))closeUpload();}
+
+function resetUpload(){
+  document.getElementById('file-list').innerHTML='';
+  document.getElementById('file-list').style.display='none';
+  document.getElementById('upload-progress').style.display='none';
+  document.getElementById('upload-success').style.display='none';
+  document.getElementById('file-input').value='';
+  document.getElementById('progress-fill').style.width='0%';
+}
+
+function dragOver(e){e.preventDefault();document.getElementById('drop-zone').classList.add('drag');}
+function dragLeave(e){document.getElementById('drop-zone').classList.remove('drag');}
+function dropFile(e){
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag');
+  const files=e.dataTransfer.files;
+  if(files.length>0) processFiles(files);
+}
+function handleFileSelect(e){
+  const files=e.target.files;
+  if(files.length>0) processFiles(files);
+}
+
+function getFileIcon(name){
+  const ext=name.split('.').pop().toLowerCase();
+  if(['xlsx','xls'].includes(ext)) return {icon:'fa-file-excel',color:'#1D6F42'};
+  if(['docx','doc'].includes(ext)) return {icon:'fa-file-word',color:'#2B579A'};
+  if(ext==='csv') return {icon:'fa-file-csv',color:'#BA7517'};
+  return {icon:'fa-file',color:'#888'};
+}
+
+function formatSize(bytes){
+  if(bytes<1024) return bytes+'B';
+  if(bytes<1048576) return (bytes/1024).toFixed(1)+'KB';
+  return (bytes/1048576).toFixed(1)+'MB';
+}
+
+function processFiles(files){
+  const list=document.getElementById('file-list');
+  list.innerHTML='';
+  list.style.display='block';
+  const validExt=['xlsx','xls','docx','doc','csv'];
+  let hasValid=false;
+  Array.from(files).forEach(file=>{
+    const ext=file.name.split('.').pop().toLowerCase();
+    const isValid=validExt.includes(ext);
+    const ic=getFileIcon(file.name);
+    const item=document.createElement('div');
+    item.className='upload-file-item';
+    item.innerHTML=`
+      <i class="fas ${ic.icon} fi" style="color:${ic.color};"></i>
+      <div class="upload-file-info">
+        <div class="upload-file-name">${file.name}</div>
+        <div class="upload-file-size">${formatSize(file.size)} &bull; ${isValid?'<span style="color:var(--green);font-weight:600;">Valid format</span>':'<span style="color:var(--coral);">Unsupported format</span>'}</div>
+      </div>
+      <button class="upload-file-del" onclick="this.parentElement.remove();checkFileList()"><i class="fas fa-times-circle"></i></button>
+    `;
+    list.appendChild(item);
+    if(isValid) hasValid=true;
+  });
+  if(hasValid){
+    setTimeout(()=>startUpload(files),400);
+  }
+}
+
+function checkFileList(){
+  const list=document.getElementById('file-list');
+  if(!list.querySelectorAll('.upload-file-item').length) list.style.display='none';
+}
+
+function startUpload(files){
+  const prog=document.getElementById('upload-progress');
+  const fill=document.getElementById('progress-fill');
+  const status=document.getElementById('upload-status');
+  const succ=document.getElementById('upload-success');
+  const succMsg=document.getElementById('success-msg');
+  prog.style.display='block';
+  succ.style.display='none';
+  const steps=[
+    {w:15,msg:'File read ho rahi hai...'},
+    {w:35,msg:'Format check ho raha hai...'},
+    {w:60,msg:'Data parse ho raha hai...'},
+    {w:80,msg:'Dashboard update ho raha hai...'},
+    {w:100,msg:'Mukammal!'}
+  ];
+  let i=0;
+  function tick(){
+    if(i>=steps.length){
+      const names=Array.from(files).map(f=>f.name).join(', ');
+      succMsg.textContent=`"${names}" successfully upload ho gayi! Data dashboard mein available hai.`;
+      succ.style.display='flex';
+      // Update nav badge
+      const navUpload=document.getElementById('nav-upload-count');
+      if(navUpload){
+        const cur=parseInt(navUpload.textContent||'0')+files.length;
+        navUpload.textContent=cur;
+        navUpload.style.display='inline-block';
+      }
+      return;
+    }
+    fill.style.width=steps[i].w+'%';
+    status.textContent=steps[i].msg;
+    i++;
+    setTimeout(tick,480);
+  }
+  tick();
+}
+</script>
+
+</body>
+</html>

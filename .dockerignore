@@ -1,0 +1,21 @@
+# Git
+.git
+.gitignore
+
+# Docs (not needed in image)
+docs/
+screenshots/
+*.md
+!README.md
+
+# GitHub Actions
+.github/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Temp files
+*.tmp
+*.bak
